@@ -11,10 +11,6 @@
   "main": "./lib/index.js",
   "typings": "./typings/index.d.ts",
   "devDependencies": {
-    "@babel/cli": "^7.17.6",
-    "@babel/core": "^7.17.5",
-    "@babel/preset-env": "^7.16.11",
-    "@babel/preset-typescript": "^7.16.7",
     "@types/jest": "^27.4.1",
     "rimraf": "^3.0.2",
     "ts-jest": "^27.1.3",
