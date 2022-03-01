@@ -1,0 +1,14 @@
+{
+  "name": "@noix/resove",
+  "version": "0.1.0",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rimraf -f ./lib && rimraf -f ./typings"
+  },
+  "main": "./lib/index.js",
+  "typings": "./typings/index.d.ts",
+  "devDependencies": {
+    "typescript": "^4.6.2",
+    "rimraf": "^3.0.2"
+  }
+}
