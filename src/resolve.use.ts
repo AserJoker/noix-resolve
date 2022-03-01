@@ -10,8 +10,8 @@ const resolve = async (
     return null;
   }
   if (typeof schema === "string") {
-    // string|number|boolean|Promise<string|number|boolean>
     if (Array.isArray(host)) {
+      // BaseValue[]|Array<Promise<BaseValue>>
       const list: unknown[] = [];
       await Promise.all(
         host.map(async (item, index) => {
@@ -24,13 +24,14 @@ const resolve = async (
       );
       return list;
     }
-    const value = await Promise.resolve(host as string | number | boolean);
+    const value = await Promise.resolve(host as string | number | boolean); // BaseValue|Promise<BaseValue>
     if (typeof value !== schema) {
       throw new Error(`invalid type ${schema} @${path}`);
     }
     return value;
   }
   if (Array.isArray(schema)) {
+    // ResolveFunction
     const [param, next] = schema;
     if (typeof host !== "function") {
       throw new Error(`${path} is not a function`);
@@ -73,6 +74,13 @@ const resolve = async (
     return res;
   }
 };
+/**
+ * Returns the resolve function with host
+ * @function useResolve
+ * @param  host the resolve host
+ * @param  globalName global value name default: "global"
+ * @returns the resolve function with host
+ */
 export const useResolve = <T>(
   host: ResolveValue | ResolveFunction,
   globalName = "global"
