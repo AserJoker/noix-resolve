@@ -1,6 +1,11 @@
 {
   "name": "@noix/resove",
   "version": "0.1.0",
+  "private":false,
+  "author": {
+    "name": "AserJoker",
+    "email": "aserjoker@outlook.com"
+  },
   "scripts": {
     "build": "tsc",
     "clean": "rimraf -f ./lib && rimraf -f ./typings",
