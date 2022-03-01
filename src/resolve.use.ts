@@ -49,7 +49,7 @@ const resolve = async (
     }
     return resolve(value, next, path + "()");
   }
-  if (Array.isArray(host)) {
+  if (Array.isArray(host)) { // IResolve[]
     const list: unknown[] = [];
     await Promise.all(
       host.map(async (item, index) => {
@@ -58,7 +58,7 @@ const resolve = async (
       })
     );
     return list;
-  } else {
+  } else { // IResolve
     const keys = Object.keys(schema);
     const res: Record<string, unknown> = {};
     await Promise.all(
