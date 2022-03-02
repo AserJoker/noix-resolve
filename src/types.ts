@@ -21,7 +21,7 @@ export interface ISchema {
 }
 
 export interface IResolve {
-  [key: string]: ResolveValue | ResolveFunction;
+  [key: string]: ResolveFunction | ResolveFunction[];
 }
 export type ResolveFunction = ResolveFunctionHandle<Object>;
 export type ResolveFunctionHandle<T extends Object = Object> = (

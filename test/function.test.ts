@@ -21,12 +21,12 @@ describe("function type", () => {
     }) => {
       return a + b;
     };
-    const memberResolve = useResolve<{ add: number }>({
+    const memberResolve = useResolve<{ add: number }>(() => ({
       add: handle as ResolveFunction,
-    });
+    }));
     memberResolve({ add: [{ a: 123, b: 234 }, "number"] }).then((res) => {
-      expect(res.add).toEqual(357);
-      expect(typeof res.add).toEqual("number");
+      expect(res?.add).toEqual(357);
+      expect(typeof res?.add).toEqual("number");
     });
   });
 });

@@ -1,9 +1,9 @@
 import { useResolve } from "../src/resolve.use";
 describe("base type", () => {
   it('123 is number "abc" is string true is boolean', () => {
-    const numberResolve = useResolve(123);
-    const stringResolve = useResolve("abc");
-    const booleanResolve = useResolve(true);
+    const numberResolve = useResolve(() => 123);
+    const stringResolve = useResolve(() => "abc");
+    const booleanResolve = useResolve(() => true);
     numberResolve("number").then((val) => {
       expect(val).toEqual(123);
       expect(typeof val).toEqual("number");
