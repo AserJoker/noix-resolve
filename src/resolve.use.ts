@@ -80,8 +80,9 @@ const resolve = async (
         return list;
       } else {
         const res: Record<string, unknown> = {};
-        await Promise.all(
-          keys.map(async (key) => {
+        if (keys.length) {
+          await keys.reduce(async (last, key) => {
+            await last;
             const handle = value[key];
             if (handle) {
               res[key] = await resolve(
@@ -93,8 +94,8 @@ const resolve = async (
             } else {
               res[key] = null;
             }
-          })
-        );
+          }, Promise.resolve());
+        }
         return res;
       }
     }
