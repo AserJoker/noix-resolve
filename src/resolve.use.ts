@@ -3,7 +3,8 @@ import { IResolve, ResolveFunction, SchemaValue } from "./types";
 const resolve = async (
   getter: ResolveFunction | ResolveFunction[],
   schema: SchemaValue,
-  path: string
+  path: string,
+  ctx: Record<string, unknown>
 ): Promise<unknown> => {
   if (Array.isArray(schema)) {
     const [param, next] = schema;
@@ -14,13 +15,14 @@ const resolve = async (
           list[index] = await resolve(
             () => handle(param),
             next,
-            `${path}()[${index}]`
+            `${path}()[${index}]`,
+            ctx
           );
         })
       );
       return list;
     } else {
-      return resolve(() => getter(param), next, `${path}()`);
+      return resolve(() => getter(param), next, `${path}()`, ctx);
     }
   } else if (
     schema === "string" ||
@@ -53,7 +55,7 @@ const resolve = async (
       const list: unknown[] = [];
       await Promise.all(
         getter.map(async (handle, index) => {
-          list[index] = await resolve(handle, schema, `${path}[${index}]`);
+          list[index] = await resolve(handle, schema, `${path}[${index}]`, ctx);
         })
       );
       return list;
@@ -67,7 +69,12 @@ const resolve = async (
         const list: unknown[] = [];
         await Promise.all(
           value.map(async (val, index) => {
-            list[index] = await resolve(() => val, schema, `${path}[${index}]`);
+            list[index] = await resolve(
+              () => val,
+              schema,
+              `${path}[${index}]`,
+              ctx
+            );
           })
         );
         return list;
@@ -80,7 +87,8 @@ const resolve = async (
               res[key] = await resolve(
                 handle,
                 schema[key] as SchemaValue,
-                `${path}.${key}`
+                `${path}.${key}`,
+                ctx
               );
             } else {
               res[key] = null;
@@ -103,8 +111,8 @@ export const useResolve = <T>(
   host: ResolveFunction | ResolveFunction[],
   globalName = "global"
 ) => {
-  return async (schema: SchemaValue) => {
-    const res = await resolve(host, schema, globalName);
+  return async (schema: SchemaValue, ctx: Record<string, unknown> = {}) => {
+    const res = await resolve(host, schema, globalName, ctx);
     return res as T | null;
   };
 };
