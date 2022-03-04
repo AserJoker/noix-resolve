@@ -36,7 +36,17 @@ const resolve = async (
       );
       return res;
     } else {
-      return getter({});
+      const res = await getter({});
+      if (Array.isArray(res)) {
+        const list: unknown[] = [];
+        await Promise.all(
+          res.map(async (val, index) => {
+            list[index] = await val;
+          })
+        );
+        return list;
+      }
+      return res;
     }
   } else {
     if (Array.isArray(getter)) {
@@ -48,27 +58,37 @@ const resolve = async (
       );
       return list;
     } else {
-      const value = (await getter({})) as IResolve;
+      const value = (await getter({})) as IResolve | IResolve[];
       if (!value) {
         return null;
       }
       const keys = Object.keys(schema);
-      const res: Record<string, unknown> = {};
-      await Promise.all(
-        keys.map(async (key) => {
-          const handle = value[key];
-          if (handle) {
-            res[key] = await resolve(
-              handle,
-              schema[key] as SchemaValue,
-              `${path}.${key}`
-            );
-          } else {
-            res[key] = null;
-          }
-        })
-      );
-      return res;
+      if (Array.isArray(value)) {
+        const list: unknown[] = [];
+        await Promise.all(
+          value.map(async (val, index) => {
+            list[index] = await resolve(() => val, schema, `${path}[${index}]`);
+          })
+        );
+        return list;
+      } else {
+        const res: Record<string, unknown> = {};
+        await Promise.all(
+          keys.map(async (key) => {
+            const handle = value[key];
+            if (handle) {
+              res[key] = await resolve(
+                handle,
+                schema[key] as SchemaValue,
+                `${path}.${key}`
+              );
+            } else {
+              res[key] = null;
+            }
+          })
+        );
+        return res;
+      }
     }
   }
 };
