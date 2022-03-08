@@ -13,7 +13,7 @@ const resolve = async (
       await Promise.all(
         getter.map(async (handle, index) => {
           list[index] = await resolve(
-            () => handle(param),
+            () => handle(param, ctx),
             next,
             `${path}()[${index}]`,
             ctx
@@ -22,7 +22,7 @@ const resolve = async (
       );
       return list;
     } else {
-      return resolve(() => getter(param), next, `${path}()`, ctx);
+      return resolve(() => getter(param, ctx), next, `${path}()`, ctx);
     }
   } else if (
     schema === "string" ||
@@ -33,12 +33,12 @@ const resolve = async (
       const res: unknown[] = [];
       await Promise.all(
         getter.map(async (handle, index) => {
-          res[index] = await handle({});
+          res[index] = await handle({}, ctx);
         })
       );
       return res;
     } else {
-      const res = await getter({});
+      const res = await getter({}, ctx);
       if (Array.isArray(res)) {
         const list: unknown[] = [];
         await Promise.all(
@@ -60,7 +60,7 @@ const resolve = async (
       );
       return list;
     } else {
-      const value = (await getter({})) as IResolve | IResolve[];
+      const value = (await getter({}, ctx)) as IResolve | IResolve[];
       if (!value) {
         return null;
       }

@@ -25,5 +25,6 @@ export interface IResolve {
 }
 export type ResolveFunction = ResolveFunctionHandle<Object>;
 export type ResolveFunctionHandle<T extends Object = Object> = (
-  arg: T
+  arg: T,
+  ctx: Record<string, unknown>
 ) => ResolveValue | Promise<ResolveValue>;
